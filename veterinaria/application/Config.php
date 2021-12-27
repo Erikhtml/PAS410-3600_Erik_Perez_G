@@ -10,6 +10,6 @@ define('CTRL', '6186e13b048f46186e148b623e');
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', '1234');
 define('DB_NAME', 'veterinaria');
 define('DB_CHAR', 'utf8');

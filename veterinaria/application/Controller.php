@@ -1,5 +1,4 @@
 <?php
-
 //esta clase no puede ser instanciada
 abstract class Controller
 {
@@ -28,14 +27,30 @@ abstract class Controller
 
 	protected function verificarSession(){
 		if (!Session::get('autenticado')) {
-			$this->redireccionar();
+			$this->redireccionar('usuarios/login');
 		}
 	}
 
 	protected function verificarRolAdmin(){
-		if (Session::get('role')!= 'Administrador') {
-			$this->redireccionar();
+		foreach (Session::get('usuario_roles')->funcionarioRol as $funcionarioRol) {
+			//echo $funcionarioRol->rol->nombre;
+			if ($funcionarioRol->rol->nombre == 'Administrador(a)') {
+				return true;
+			}
 		}
+
+		$this->redireccionar();
+	}
+
+	protected function verificarRolAdminSuper(){
+		foreach (Session::get('usuario_roles')->funcionarioRol as $funcionarioRol) {
+			//echo $funcionarioRol->rol->nombre;
+			if ($funcionarioRol->rol->nombre == 'Administrador(a)' || $funcionarioRol->rol->nombre == 'Supervisor(a)') {
+				return true;
+			}
+		}
+
+		$this->redireccionar();
 	}
 
 	protected  function verificarMensajes(){
@@ -167,5 +182,34 @@ abstract class Controller
 			return $arreglo;
 		}
 		return $_POST[$clave];
+	}
+
+	protected function validaRut($rut)
+	{
+		$rut = preg_replace('/[^k0-9]/i', '', $rut);
+		$dv  = substr($rut, -1);
+		$numero = substr($rut, 0, strlen($rut)-1);
+		$i = 2;
+		$suma = 0;
+		foreach(array_reverse(str_split($numero)) as $v)
+		{
+			if($i==8)
+				$i = 2;
+
+			$suma += $v * $i;
+			++$i;
+		}
+
+		$dvr = 11 - ($suma % 11);
+
+		if($dvr == 11)
+			$dvr = 0;
+		if($dvr == 10)
+			$dvr = 'K';
+
+		if($dvr == strtoupper($dv))
+			return true;
+		else
+			return false;
 	}
 }
