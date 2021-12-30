@@ -15,6 +15,6 @@ class Usuario extends Model
 
     public function registro()
     {
-        return $this->belongsTo(Registro::class);
+        return $this->hasMany(Registro::class);
     }
 }

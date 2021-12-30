@@ -71,7 +71,17 @@ class usuariosController extends Controller
             Session::set('usuario_roles', $roles);
             Session::set('tiempo', time());
 
-            registrosController.add($usuario->id);
+            
+            $ip = $_SERVER['REMOTE_ADDR'];
+
+            $registro = new Registro;
+            
+            $registro->usuario_id = $usuario->id;
+            $registro->ip = $ip;
+            $registro->save();
+
+            Session::set('msg_success','Se ha registrado su Ingreso al Sistema');
+            
             $this->redireccionar();
         }
 
@@ -80,8 +90,13 @@ class usuariosController extends Controller
 
     public function logout()
     {
-        #registrosController.update($id);
+        $registro = Registro::get()->Last();
+        
+        $registro->save();
+        
         Session::destroy();
+
+        $this->redireccionar('registros/view/' . $usuario->id);
 
         $this->redireccionar();
     }
